@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DSE Score Calculator</title>
+    <link rel="stylesheet" href="./assets/styles.css">
+    <script src="./assets/data.js" defer></script>
+    <script src="./assets/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-bar">
+        <div class="selector-field">
+          <label class="visually-hidden" for="scorecardSelect">Scorecard</label>
+          <select id="scorecardSelect" class="scorecard-select"></select>
+        </div>
+        <div class="score-chip" aria-live="polite">
+          <span class="score-chip-label">Score</span>
+          <strong id="scoreValue">0</strong>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="score-area" aria-labelledby="scorecardTitle">
+          <div class="title-row">
+            <div>
+              <p class="eyebrow">Scorecard</p>
+              <h1 id="scorecardTitle">DSE Score Calculator</h1>
+            </div>
+            <div class="totals-grid" aria-label="Score totals">
+              <div>
+                <span>Positive</span>
+                <strong id="positiveTotal">0</strong>
+              </div>
+              <div>
+                <span>Deductions</span>
+                <strong id="deductionTotal">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <section class="point-section" aria-labelledby="positiveHeading">
+            <div class="section-heading">
+              <h2 id="positiveHeading">Positive Items</h2>
+              <span id="positiveCount">0 items</span>
+            </div>
+            <div class="list-head" aria-hidden="true">
+              <span>Name</span>
+              <span>Value</span>
+            </div>
+            <div id="positiveList" class="point-list"></div>
+          </section>
+
+          <section class="point-section" aria-labelledby="deductionsHeading">
+            <div class="section-heading">
+              <h2 id="deductionsHeading">Deductions</h2>
+              <span id="deductionCount">0 items</span>
+            </div>
+            <div class="list-head" aria-hidden="true">
+              <span>Name</span>
+              <span>Value</span>
+            </div>
+            <div id="deductionList" class="point-list"></div>
+          </section>
+        </section>
+
+        <aside class="summary-panel" aria-labelledby="summaryHeading">
+          <h2 id="summaryHeading">Result</h2>
+          <dl class="summary-list">
+            <div>
+              <dt>Positive</dt>
+              <dd id="summaryPositive">0</dd>
+            </div>
+            <div>
+              <dt>Deductions</dt>
+              <dd id="summaryDeductions">0</dd>
+            </div>
+            <div class="summary-score">
+              <dt>Final Score</dt>
+              <dd id="summaryScore">0</dd>
+            </div>
+          </dl>
+          <button id="generateResult" class="primary-action" type="button">Generate Results</button>
+          <div id="resultLinkPanel" class="result-link-panel" hidden>
+            <label for="resultUrl">Result URL</label>
+            <div class="result-link-row">
+              <input id="resultUrl" type="text" readonly>
+              <button id="copyResult" class="secondary-action" type="button">Copy</button>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>

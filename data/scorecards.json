@@ -1,0 +1,18 @@
+{
+  "scorecards": [
+    {
+      "year": "2026",
+      "name": "Example Competition",
+      "positive": [
+        { "name": "Complete documentation", "value": 10 },
+        { "name": "Working demonstration", "value": 15 },
+        { "name": "Clear technical explanation", "value": 8 }
+      ],
+      "negative": [
+        { "name": "Late submission", "value": 5 },
+        { "name": "Missing source files", "value": 10 },
+        { "name": "Incorrect format", "value": 3 }
+      ]
+    }
+  ]
+}
