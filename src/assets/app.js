@@ -3,6 +3,7 @@
   const elements = {
     select: document.getElementById("scorecardSelect"),
     title: document.getElementById("scorecardTitle"),
+    recipientName: document.getElementById("recipientName"),
     scoreValue: document.getElementById("scoreValue"),
     positiveTotal: document.getElementById("positiveTotal"),
     deductionTotal: document.getElementById("deductionTotal"),
@@ -25,6 +26,10 @@
     deductions: new Set()
   };
 
+  function normalizeRecipientName(value) {
+    return value.trim().replace(/\s+/g, " ").slice(0, 120);
+  }
+
   function getInitialSlug() {
     const requested = new URLSearchParams(window.location.search).get("card");
     if (requested && data.scorecards.some((scorecard) => scorecard.slug === requested)) {
@@ -32,6 +37,11 @@
     }
 
     return data.scorecards[0] ? data.scorecards[0].slug : "";
+  }
+
+  function getInitialRecipientName() {
+    const requested = new URLSearchParams(window.location.search).get("recipient");
+    return requested ? normalizeRecipientName(requested) : "";
   }
 
   function getCurrentScorecard() {
@@ -83,7 +93,7 @@
 
   function renderPointList(container, items, group, selectedIndexes) {
     if (items.length === 0) {
-      renderEmptyState(container, group === "positive" ? "No positive items." : "No deductions.");
+      renderEmptyState(container, group === "positive" ? "No achievements." : "No deductions.");
       return;
     }
 
@@ -176,7 +186,13 @@
       positive: sortedIndexes(selected.positive),
       deductions: sortedIndexes(selected.deductions)
     };
-    const url = new URL("./results.html", window.location.href);
+    const recipientName = normalizeRecipientName(elements.recipientName.value);
+
+    if (recipientName !== "") {
+      payload.recipientName = recipientName;
+    }
+
+    const url = new URL("./results/", window.location.href);
     url.search = "";
     url.searchParams.set("r", encodeUrlSafeBase64(payload));
     return url.href;
@@ -190,6 +206,10 @@
 
   elements.positiveList.addEventListener("change", handleCheckboxChange);
   elements.deductionList.addEventListener("change", handleCheckboxChange);
+  elements.recipientName.addEventListener("input", () => {
+    elements.resultLinkPanel.hidden = true;
+    elements.resultUrl.value = "";
+  });
 
   function handleCheckboxChange(event) {
     const target = event.target;
@@ -243,5 +263,6 @@
   });
 
   renderScorecardOptions();
+  elements.recipientName.value = getInitialRecipientName();
   render();
 })();

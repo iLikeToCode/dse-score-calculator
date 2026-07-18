@@ -24,13 +24,17 @@
       <main class="workspace">
         <section class="score-area" aria-labelledby="scorecardTitle">
           <div class="title-row">
-            <div>
+            <div class="title-content">
               <p class="eyebrow">Scorecard</p>
               <h1 id="scorecardTitle">DSE Score Calculator</h1>
+              <div class="recipient-field">
+                <label for="recipientName">Name / Team Name</label>
+                <input id="recipientName" type="text" autocomplete="name" placeholder="Enter name or team">
+              </div>
             </div>
             <div class="totals-grid" aria-label="Score totals">
               <div>
-                <span>Positive</span>
+                <span>Achievements</span>
                 <strong id="positiveTotal">0</strong>
               </div>
               <div>
@@ -42,7 +46,7 @@
 
           <section class="point-section" aria-labelledby="positiveHeading">
             <div class="section-heading">
-              <h2 id="positiveHeading">Positive Items</h2>
+              <h2 id="positiveHeading">Achievements</h2>
               <span id="positiveCount">0 items</span>
             </div>
             <div class="list-head" aria-hidden="true">
@@ -69,7 +73,7 @@
           <h2 id="summaryHeading">Result</h2>
           <dl class="summary-list">
             <div>
-              <dt>Positive</dt>
+              <dt>Achievements</dt>
               <dd id="summaryPositive">0</dd>
             </div>
             <div>

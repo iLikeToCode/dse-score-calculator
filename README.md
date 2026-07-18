@@ -29,4 +29,4 @@ The build writes the deployable site to `dist/`.
 }
 ```
 
-Positive items add their `value`. Negative items render under `Deductions` and subtract their `value`. The final score never goes below `0`.
+Items in `positive` render as `Achievements` and add their `value`. Negative items render under `Deductions` and subtract their `value`. The final score never goes below `0`.

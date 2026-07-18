@@ -2,19 +2,25 @@
   const data = window.SCORECARD_DATA || { scorecards: [] };
   const elements = {
     title: document.getElementById("resultTitle"),
+    scorecardTitle: document.getElementById("resultScorecard"),
     scoreValue: document.getElementById("scoreValue"),
+    certificateScore: document.getElementById("certificateScore"),
     positiveTotal: document.getElementById("positiveTotal"),
     deductionTotal: document.getElementById("deductionTotal"),
     summaryPositive: document.getElementById("summaryPositive"),
     summaryDeductions: document.getElementById("summaryDeductions"),
     summaryScore: document.getElementById("summaryScore"),
+    issuedDate: document.getElementById("issuedDate"),
+    certificateId: document.getElementById("certificateId"),
+    certificateYear: document.getElementById("certificateYear"),
     positiveCount: document.getElementById("positiveCount"),
     deductionCount: document.getElementById("deductionCount"),
     positiveList: document.getElementById("positiveList"),
     deductionList: document.getElementById("deductionList"),
     errorPanel: document.getElementById("errorPanel"),
     resultContent: document.getElementById("resultContent"),
-    editLink: document.getElementById("editLink")
+    editLink: document.getElementById("editLink"),
+    printCertificate: document.getElementById("printCertificate")
   };
 
   function decodeUrlSafeBase64(value) {
@@ -51,6 +57,10 @@
     return indexes;
   }
 
+  function normalizeRecipientName(value) {
+    return value.trim().replace(/\s+/g, " ").slice(0, 120);
+  }
+
   function parsePayload() {
     const encoded = new URLSearchParams(window.location.search).get("r");
 
@@ -72,6 +82,7 @@
 
     return {
       scorecard,
+      recipientName: typeof payload.recipientName === "string" ? normalizeRecipientName(payload.recipientName) : "",
       positive: validateIndexes(payload.positive, scorecard.positive.length, "positive"),
       deductions: validateIndexes(payload.deductions, scorecard.negative.length, "deductions")
     };
@@ -85,11 +96,29 @@
     element.textContent = String(value);
   }
 
+  function formatIssueDate() {
+    return new Intl.DateTimeFormat(undefined, {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }).format(new Date());
+  }
+
+  function formatCertificateId(result, finalScore) {
+    const namePart = (result.recipientName || result.scorecard.name)
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 18) || "SCORE";
+
+    return `${result.scorecard.year}-${namePart}-${finalScore}`;
+  }
+
   function renderSelectedList(container, items, indexes, group) {
     if (indexes.length === 0) {
       const empty = document.createElement("p");
       empty.className = "empty-state";
-      empty.textContent = group === "positive" ? "No positive items selected." : "No deductions selected.";
+      empty.textContent = group === "positive" ? "No achievements selected." : "No deductions selected.";
       container.replaceChildren(empty);
       return;
     }
@@ -125,14 +154,26 @@
     const deductionTotal = sumSelected(result.scorecard.negative, result.deductions);
     const finalScore = Math.max(0, positiveTotal - deductionTotal);
 
-    elements.title.textContent = result.scorecard.label;
-    elements.editLink.href = `./index.html?card=${encodeURIComponent(result.scorecard.slug)}`;
+    const recipientName = result.recipientName || result.scorecard.label;
+    const editParams = new URLSearchParams({ card: result.scorecard.slug });
+
+    if (result.recipientName !== "") {
+      editParams.set("recipient", result.recipientName);
+    }
+
+    elements.title.textContent = recipientName;
+    elements.scorecardTitle.textContent = result.scorecard.label;
+    elements.editLink.href = `../index.html?${editParams.toString()}`;
     setText(elements.scoreValue, finalScore);
+    setText(elements.certificateScore, finalScore);
     setText(elements.positiveTotal, positiveTotal);
     setText(elements.deductionTotal, deductionTotal);
     setText(elements.summaryPositive, positiveTotal);
     setText(elements.summaryDeductions, deductionTotal);
     setText(elements.summaryScore, finalScore);
+    setText(elements.issuedDate, formatIssueDate());
+    setText(elements.certificateId, formatCertificateId(result, finalScore));
+    setText(elements.certificateYear, result.scorecard.year);
     setText(elements.positiveCount, `${result.positive.length} selected`);
     setText(elements.deductionCount, `${result.deductions.length} selected`);
     renderSelectedList(elements.positiveList, result.scorecard.positive, result.positive, "positive");
@@ -143,8 +184,12 @@
     elements.errorPanel.hidden = false;
     elements.errorPanel.textContent = error.message;
     elements.resultContent.hidden = true;
-    elements.editLink.href = "./index.html";
+    elements.editLink.href = "../index.html";
   }
+
+  elements.printCertificate.addEventListener("click", () => {
+    window.print();
+  });
 
   try {
     renderResult(parsePayload());
